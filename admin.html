@@ -3,235 +3,214 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KDS | Caffe-30 Sijhora</title>
+    <title>Caffe-30 | Secure Kitchen Display</title>
+    <link rel="stylesheet" href="style.css">
     <style>
-        :root {
-            --primary: #c98a4b;
-            --primary-dark: #8c5521;
-            --bg-color: #fdf8f4;
-            --glass-bg: rgba(255, 255, 255, 0.85);
-            --glass-border: rgba(139, 90, 43, 0.2);
+        /* --- SECURE ADMIN DASHBOARD STYLES --- */
+        body { background-color: #1a1a1a; color: #fff; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        
+        /* Login Screen */
+        #login-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(10px);
+            display: flex; justify-content: center; align-items: center; z-index: 1000;
+        }
+        .login-box {
+            background: rgba(255, 255, 255, 0.05); padding: 40px; border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1); text-align: center;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5); width: 300px;
+        }
+        .login-box input {
+            width: 90%; padding: 12px; margin: 10px 0; border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.2); background: transparent; color: white;
+        }
+        .login-box button {
+            width: 100%; padding: 12px; margin-top: 15px; border-radius: 8px;
+            background: #c98a4b; color: white; border: none; font-weight: bold; cursor: pointer;
         }
 
-        body {
-            margin: 0;
-            padding: 20px;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
-            background-image: linear-gradient(rgba(253, 248, 244, 0.92), rgba(253, 248, 244, 0.95)), url('https://images.unsplash.com/photo-1447933601403-0c6688de566e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80');
-            background-attachment: fixed;
-            background-size: cover;
-            color: #2b1b12;
+        /* Dashboard & Tabs */
+        #dashboard { display: none; padding: 20px; max-width: 1200px; margin: 0 auto; }
+        .admin-header {
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 2px solid rgba(201, 138, 75, 0.3); padding-bottom: 20px; margin-bottom: 20px;
         }
+        .tabs { display: flex; gap: 15px; }
+        .tab-btn {
+            background: transparent; color: #aaa; border: 1px solid #aaa;
+            padding: 8px 16px; border-radius: 20px; cursor: pointer; transition: 0.3s;
+        }
+        .tab-btn.active { background: #c98a4b; color: white; border-color: #c98a4b; }
+        .logout-btn { background: #ff4757; color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; }
 
-        header {
-            text-align: center;
-            padding: 20px 0;
-            margin-bottom: 30px;
-            background: var(--glass-bg);
-            backdrop-filter: blur(15px);
-            border-radius: 20px;
-            border: 1px solid var(--glass-border);
-            box-shadow: 0 10px 30px rgba(43, 27, 18, 0.1);
-        }
-
-        header h1 {
-            margin: 0;
-            color: var(--primary-dark);
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-
-        #orders-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 25px;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        .order-card {
-            background: var(--glass-bg);
-            backdrop-filter: blur(15px);
-            border: 1px solid var(--glass-border);
-            border-radius: 20px;
-            padding: 25px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .order-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 35px rgba(43, 27, 18, 0.15);
-        }
-
-        .order-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 2px dashed var(--glass-border);
-            padding-bottom: 15px;
-            margin-bottom: 15px;
-        }
-
-        .order-header h2 {
-            margin: 0;
-            font-size: 1.8rem;
-            color: var(--primary-dark);
-        }
-
-        .table-badge {
-            background: var(--primary-dark);
-            color: white;
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-weight: bold;
-            font-size: 1.2rem;
-        }
-
-        .order-items {
-            list-style: none;
-            padding: 0;
-            margin: 0 0 20px 0;
-            flex: 1;
-        }
-
-        .order-items li {
-            font-size: 1.2rem;
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .special-instructions {
-            background: rgba(255, 77, 77, 0.1);
-            color: #d32f2f;
-            padding: 10px;
-            border-radius: 10px;
-            font-size: 1rem;
-            margin-bottom: 20px;
-            border: 1px solid rgba(255, 77, 77, 0.3);
-        }
-
-        .done-btn {
-            background: #27ae60;
-            color: white;
-            border: none;
-            padding: 15px;
-            font-size: 1.2rem;
-            font-weight: bold;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: background 0.3s;
-            width: 100%;
-        }
-
-        .done-btn:hover {
-            background: #2ecc71;
-        }
-
-        .empty-state {
-            text-align: center;
-            grid-column: 1 / -1;
-            font-size: 1.5rem;
-            color: var(--primary-dark);
-            padding: 50px;
-            background: var(--glass-bg);
-            border-radius: 20px;
-        }
+        /* Order Cards */
+        .orders-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+        .order-card { background: #2a2a2a; border-left: 5px solid #c98a4b; border-radius: 10px; padding: 20px; }
+        .order-card.completed { border-left-color: #2ed573; opacity: 0.8; }
+        .complete-btn { background: #2ed573; color: white; border: none; padding: 10px; width: 100%; border-radius: 5px; cursor: pointer; margin-top: 15px; }
     </style>
 </head>
 <body>
 
-    <header>
-        <h1>Kitchen Display System (KDS)</h1>
-        <p>Active Orders Live Feed</p>
-    </header>
-
-    <div id="orders-grid">
-        <!-- Orders will be injected here via JavaScript -->
+    <!-- 🔒 LOGIN SCREEN -->
+    <div id="login-screen">
+        <div class="login-box">
+            <h2 style="color: #c98a4b; margin-bottom: 20px;">Staff Login</h2>
+            <input type="text" id="admin-user" placeholder="Username" autocomplete="off">
+            <input type="password" id="admin-pass" placeholder="Password">
+            <button onclick="attemptLogin()">Access Kitchen</button>
+            <p id="login-error" style="color: #ff4757; display: none; margin-top: 10px; font-size: 0.9rem;">Invalid Credentials</p>
+        </div>
     </div>
 
-    <script>
-        const ordersGrid = document.getElementById('orders-grid');
+    <!-- 📊 SECURE DASHBOARD -->
+    <div id="dashboard">
+        <div class="admin-header">
+            <h1 style="color: #c98a4b;">Caffe-30 KDS</h1>
+            <div class="tabs">
+                <button class="tab-btn active" id="tab-active" onclick="switchTab('active')">🔴 Live Kitchen</button>
+                <button class="tab-btn" id="tab-history" onclick="switchTab('history')">📜 Order History</button>
+            </div>
+            <button class="logout-btn" onclick="logout()">Logout</button>
+        </div>
 
-        // Function to fetch active orders from the database
-        async function fetchOrders() {
+        <div id="active-view" class="orders-grid"></div>
+        <div id="history-view" class="orders-grid" style="display: none;"></div>
+    </div>
+
+    <!-- ⚙️ SECURE JAVASCRIPT LOGIC -->
+    <script>
+        let authHeader = ""; // Will store the Basic Auth token
+        let currentTab = "active";
+        let refreshTimer;
+
+        // 1. Authentication Logic
+        async function attemptLogin() {
+            const user = document.getElementById('admin-user').value;
+            const pass = document.getElementById('admin-pass').value;
+            
+            // JavaScript's btoa() encodes the string into Base64 for Basic Auth
+            const encoded = btoa(user + ":" + pass);
+            const tempHeader = "Basic " + encoded;
+
             try {
-                const response = await fetch('/api/orders/active');
-                const data = await response.json();
-                renderOrders(data.active_orders);
-            } catch (error) {
-                console.error("Error fetching orders:", error);
+                // Ping the server to test credentials
+                const res = await fetch('/api/orders/active', { headers: { 'Authorization': tempHeader } });
+                if (res.ok) {
+                    authHeader = tempHeader;
+                    sessionStorage.setItem("caffeAuth", authHeader); // Save so refresh doesn't log you out
+                    document.getElementById('login-screen').style.display = 'none';
+                    document.getElementById('dashboard').style.display = 'block';
+                    document.getElementById('login-error').style.display = 'none';
+                    startDashboard();
+                } else {
+                    document.getElementById('login-error').style.display = 'block';
+                }
+            } catch (err) {
+                alert("Server error. Is the backend running?");
             }
         }
 
-        // Function to build the HTML for the order cards
-        // Replace ONLY the renderOrders function inside your admin.html script
-        function renderOrders(orders) {
-            ordersGrid.innerHTML = ''; 
+        // Auto-login if session exists
+        if (sessionStorage.getItem("caffeAuth")) {
+            authHeader = sessionStorage.getItem("caffeAuth");
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('dashboard').style.display = 'block';
+            startDashboard();
+        }
+
+        function logout() {
+            sessionStorage.removeItem("caffeAuth");
+            authHeader = "";
+            clearInterval(refreshTimer);
+            document.getElementById('dashboard').style.display = 'none';
+            document.getElementById('login-screen').style.display = 'flex';
+            document.getElementById('admin-user').value = '';
+            document.getElementById('admin-pass').value = '';
+        }
+
+        // 2. Tab Navigation
+        function switchTab(tab) {
+            currentTab = tab;
+            document.getElementById('tab-active').classList.remove('active');
+            document.getElementById('tab-history').classList.remove('active');
+            document.getElementById('active-view').style.display = 'none';
+            document.getElementById('history-view').style.display = 'none';
+
+            document.getElementById(`tab-${tab}`).classList.add('active');
+            document.getElementById(`${tab}-view`).style.display = 'grid';
+            
+            fetchData(); // Immediately load data for the selected tab
+        }
+
+        // 3. Data Fetching
+        function startDashboard() {
+            fetchData();
+            refreshTimer = setInterval(fetchData, 5000); // Auto-refresh every 5 seconds
+        }
+
+        async function fetchData() {
+            if (!authHeader) return;
+
+            const endpoint = currentTab === 'active' ? '/api/orders/active' : '/api/orders/history';
+            const containerId = currentTab === 'active' ? 'active-view' : 'history-view';
+
+            try {
+                const res = await fetch(endpoint, { headers: { 'Authorization': authHeader } });
+                if (res.status === 401) { logout(); return; } // Token expired/invalid
+                
+                const data = await res.json();
+                const orders = currentTab === 'active' ? data.active_orders : data.history_orders;
+                renderOrders(orders, containerId, currentTab);
+            } catch (err) {
+                console.error("Fetch error:", err);
+            }
+        }
+
+        // 4. UI Rendering
+        function renderOrders(orders, containerId, type) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = "";
 
             if (orders.length === 0) {
-                ordersGrid.innerHTML = `<div class="empty-state">No active orders. The kitchen is clear! 🎉</div>`;
+                container.innerHTML = `<h3 style="color:#777; grid-column: 1 / -1;">No ${type} orders found.</h3>`;
                 return;
             }
 
             orders.forEach(order => {
-                let itemsHTML = '';
-                order.items.forEach(item => {
-                    // 🌟 Now shows quantity! (e.g., 2x Thick Cold Coffee)
-                    itemsHTML += `<li><span><strong>${item.quantity}x</strong> ${item.name}</span></li>`;
-                });
+                let itemsHtml = order.items.map(i => `<li>${i.quantity}x ${i.name}</li>`).join('');
+                
+                let buttonHtml = type === 'active' 
+                    ? `<button class="complete-btn" onclick="completeOrder(${order.id})">Mark as Completed</button>`
+                    : `<p style="color:#2ed573; font-weight:bold; margin-top:10px;">✓ Delivered</p>`;
 
-                let notesHTML = '';
-                if (order.special_instructions && order.special_instructions.trim() !== '') {
-                    notesHTML = `<div class="special-instructions"><strong>Note:</strong> ${order.special_instructions}</div>`;
-                }
-
-                const card = document.createElement('div');
-                card.className = 'order-card';
-                card.innerHTML = `
-                    <div>
-                        <div class="order-header">
-                            <!-- 🌟 Now shows Customer Name instead of Order #1, #2 -->
-                            <h2>${order.customer_name}</h2>
-                            <span class="table-badge">Table ${order.table_number}</span>
-                        </div>
-                        <p style="margin-top:0; color:#8c5521;">📞 ${order.customer_phone}</p>
-                        <ul class="order-items">
-                            ${itemsHTML}
-                        </ul>
-                        ${notesHTML}
+                container.innerHTML += `
+                    <div class="order-card ${type === 'history' ? 'completed' : ''}">
+                        <h3 style="color:#c98a4b; margin:0 0 10px 0;">Order #${order.id}</h3>
+                        <p><strong>Name:</strong> ${order.customer_name}</p>
+                        <p><strong>Table:</strong> ${order.table_number} | <strong>Phone:</strong> ${order.customer_phone}</p>
+                        ${order.special_instructions ? `<p><strong>Note:</strong> <em style="color:#ffda79;">${order.special_instructions}</em></p>` : ''}
+                        <hr style="border-color: rgba(255,255,255,0.1); margin: 10px 0;">
+                        <ul style="padding-left: 20px; margin: 10px 0;">${itemsHtml}</ul>
+                        <h4 style="margin: 10px 0;">Total: ₹${order.total_amount}</h4>
+                        ${buttonHtml}
                     </div>
-                    <button class="done-btn" onclick="markAsDone(${order.id})">Mark as Done ✓</button>
                 `;
-                ordersGrid.appendChild(card);
             });
         }
 
-        // Function to update the database when an order is finished
-        async function markAsDone(orderId) {
+        // 5. Action Handlers
+        async function completeOrder(orderId) {
             try {
-                const response = await fetch(`/api/order/${orderId}/complete`, {
-                    method: 'PUT'
+                await fetch(`/api/order/${orderId}/complete`, {
+                    method: 'PUT',
+                    headers: { 'Authorization': authHeader }
                 });
-                
-                if (response.ok) {
-                    fetchOrders(); // Refresh the grid immediately
-                }
-            } catch (error) {
-                console.error("Error completing order:", error);
+                fetchData(); // Instantly refresh the UI
+            } catch (err) {
+                alert("Failed to complete order.");
             }
         }
-
-        // Fetch orders immediately on load
-        fetchOrders();
-
-        // Auto-refresh the kitchen display every 5 seconds
-        setInterval(fetchOrders, 5000);
     </script>
 </body>
 </html>

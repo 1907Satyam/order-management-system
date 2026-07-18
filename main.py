@@ -1,4 +1,5 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Depends, status
+from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
@@ -6,15 +7,32 @@ from typing import List, Optional
 import sqlite3
 import json
 import razorpay
+import secrets
 
 app = FastAPI(title="Caffe-30 Backend API")
 
-# --- RAZORPAY CONFIGURATION ---
-# Replace with your actual Test Keys from the Razorpay Dashboard
-RZP_KEY_ID = "rzp_test_TEeLFQAYo8bpHT"
-RZP_KEY_SECRET = "yPR82eTB5QPNNQGP5HmYR3n9"
+# --- SECURITY CONFIGURATION ---
+security = HTTPBasic()
 
-# Initialize Razorpay Client
+# Change these to whatever you want your admin login to be!
+ADMIN_USERNAME = "admin"
+ADMIN_PASSWORD = "Satyam1907"
+
+def verify_credentials(credentials: HTTPBasicCredentials = Depends(security)):
+    is_correct_username = secrets.compare_digest(credentials.username, ADMIN_USERNAME)
+    is_correct_password = secrets.compare_digest(credentials.password, ADMIN_PASSWORD)
+    if not (is_correct_username and is_correct_password):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect username or password",
+            headers={"WWW-Authenticate": "Basic"},
+        )
+    return credentials.username
+
+# --- RAZORPAY CONFIGURATION ---
+RZP_KEY_ID = "rzp_test_TEeLFQAYo8bpHT"
+RZP_KEY_SECRET = " yPR82eTB5QPNNQGP5HmYR3n9"
+
 razorpay_client = razorpay.Client(auth=(RZP_KEY_ID, RZP_KEY_SECRET))
 
 app.add_middleware(
@@ -66,22 +84,18 @@ class VerifyPaymentRequest(BaseModel):
     items: List[CartItem]
     total_amount: float
 
-# --- API ENDPOINTS ---
+# --- PUBLIC API ENDPOINTS (No Login Required) ---
 
 @app.post("/api/create-payment")
 async def create_payment(req: CreatePaymentRequest):
     try:
-        # Razorpay accepts amounts in the smallest currency subunit (paise for INR)
         amount_in_paise = int(req.total_amount * 100)
-        
-        # Create an Order using the Razorpay Orders API
         data = {
             "amount": amount_in_paise,
             "currency": "INR",
-            "payment_capture": "1" # Automatically capture the payment
+            "payment_capture": "1" 
         }
         payment_order = razorpay_client.order.create(data=data)
-        
         return {
             "razorpay_order_id": payment_order['id'],
             "amount": amount_in_paise
@@ -92,17 +106,14 @@ async def create_payment(req: CreatePaymentRequest):
 @app.post("/api/verify-payment")
 async def verify_payment(req: VerifyPaymentRequest):
     try:
-        # Verify the cryptographic signature returned by the frontend
         razorpay_client.utility.verify_payment_signature({
             'razorpay_order_id': req.razorpay_order_id,
             'razorpay_payment_id': req.razorpay_payment_id,
             'razorpay_signature': req.razorpay_signature
         })
         
-        # If signature is valid, write the order to the kitchen database
         conn = sqlite3.connect("caffe30.db")
         cursor = conn.cursor()
-        
         items_json = json.dumps([item.dict() for item in req.items])
         
         cursor.execute(
@@ -110,19 +121,19 @@ async def verify_payment(req: VerifyPaymentRequest):
                VALUES (?, ?, ?, ?, ?, ?)""",
             (req.customer_name, req.customer_phone, req.table_number, req.special_instructions, items_json, req.total_amount)
         )
-        
         conn.commit()
         conn.close()
-        
         return {"status": "success", "message": "Payment verified and order sent!"}
         
     except razorpay.errors.SignatureVerificationError:
-        raise HTTPException(status_code=400, detail="Payment verification failed due to invalid signature.")
+        raise HTTPException(status_code=400, detail="Invalid signature.")
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+# --- SECURE API ENDPOINTS (Requires Login) ---
+
 @app.get("/api/orders/active")
-async def get_active_orders():
+async def get_active_orders(username: str = Depends(verify_credentials)):
     try:
         conn = sqlite3.connect("caffe30.db")
         conn.row_factory = sqlite3.Row 
@@ -130,25 +141,30 @@ async def get_active_orders():
         cursor.execute("SELECT * FROM orders WHERE status = 'Preparing' ORDER BY id ASC")
         rows = cursor.fetchall()
         
-        orders = []
-        for row in rows:
-            orders.append({
-                "id": row["id"],
-                "customer_name": row["customer_name"],
-                "customer_phone": row["customer_phone"],
-                "table_number": row["table_number"],
-                "special_instructions": row["special_instructions"],
-                "items": json.loads(row["items"]),
-                "total_amount": row["total_amount"]
-            })
-            
+        orders = [{"id": r["id"], "customer_name": r["customer_name"], "customer_phone": r["customer_phone"], "table_number": r["table_number"], "special_instructions": r["special_instructions"], "items": json.loads(r["items"]), "total_amount": r["total_amount"]} for r in rows]
         conn.close()
         return {"active_orders": orders}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.get("/api/orders/history")
+async def get_order_history(username: str = Depends(verify_credentials)):
+    try:
+        conn = sqlite3.connect("caffe30.db")
+        conn.row_factory = sqlite3.Row 
+        cursor = conn.cursor()
+        # Fetch completed orders, sorted by newest first
+        cursor.execute("SELECT * FROM orders WHERE status = 'Completed' ORDER BY id DESC")
+        rows = cursor.fetchall()
+        
+        orders = [{"id": r["id"], "customer_name": r["customer_name"], "customer_phone": r["customer_phone"], "table_number": r["table_number"], "special_instructions": r["special_instructions"], "items": json.loads(r["items"]), "total_amount": r["total_amount"]} for r in rows]
+        conn.close()
+        return {"history_orders": orders}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 @app.put("/api/order/{order_id}/complete")
-async def complete_order(order_id: int):
+async def complete_order(order_id: int, username: str = Depends(verify_credentials)):
     try:
         conn = sqlite3.connect("caffe30.db")
         cursor = conn.cursor()
