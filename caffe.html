@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Caffe-30 Sijhora | Premium Light Theme</title>
+    <style>
+        /* ☕ Premium Light Coffee Theme Variables */
+        :root {
+            --primary: #c98a4b; /* Caramel Gold */
+            --primary-dark: #8c5521; /* Rich Dark Brown */
+            --bg-color: #fdf8f4; /* Creamy Off-White */
+            --text-main: #2b1b12; /* Espresso Brown for main text */
+            --text-muted: #6e4e37; /* Lighter brown for descriptions */
+            --glass-bg: rgba(255, 255, 255, 0.85); /* Frosty white glass */
+            --glass-border: rgba(139, 90, 43, 0.2); /* Subtle brown border */
+            --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* 🥚 EASTER EGG VARIABLES (Keeps the chaotic glitch fun) */
+        body.hacked {
+            --primary: #00ffcc;
+            --bg-color: #1a0033;
+            --text-main: #ffffff;
+            --glass-bg: rgba(0, 255, 204, 0.1);
+            --glass-border: rgba(255, 0, 255, 0.5);
+            --font-family: 'Courier New', Courier, monospace;
+            background-image: none !important;
+            animation: screenGlitch 0.2s infinite;
+        }
+
+        @keyframes screenGlitch {
+            0% { text-shadow: 2px 0 #ff00ff, -2px 0 #00ffff; }
+            50% { text-shadow: -2px 0 #ff00ff, 2px 0 #00ffff; }
+            100% { text-shadow: 2px 0 #ff00ff, -2px 0 #00ffff; }
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: var(--font-family);
+            background-color: var(--bg-color);
+            
+            /* Coffee Bean Background Image with Cream Overlay */
+            background-image: linear-gradient(rgba(253, 248, 244, 0.92), rgba(253, 248, 244, 0.95)), url('https://images.unsplash.com/photo-1447933601403-0c6688de566e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80');
+            background-attachment: fixed;
+            background-size: cover;
+            background-position: center;
+            
+            color: var(--text-main);
+            overflow-x: hidden;
+            scroll-snap-type: y proximity;
+            cursor: none; 
+            transition: background-color 0.5s ease;
+        }
+
+        /* 🌟 Parallax Background (Now with Coffee Beans!) */
+        #parallax-bg {
+            position: fixed;
+            top: -10%; left: -10%;
+            width: 120vw; height: 120vh;
+            z-index: -2;
+            pointer-events: none;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 120px;
+            opacity: 0.15; /* Slightly more visible on light theme */
+            font-size: 3rem;
+            color: var(--primary-dark);
+            transition: transform 0.1s ease-out;
+        }
+        
+        /* 🌟 Custom Cursor & Particles */
+        #custom-cursor {
+            position: fixed;
+            top: 0; left: 0;
+            width: 20px; height: 20px;
+            background: var(--primary);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: width 0.2s, height 0.2s, background 0.2s, border-radius 0.2s;
+            mix-blend-mode: multiply; /* Blends nicely with light background */
+            box-shadow: 0 0 15px rgba(201, 138, 75, 0.5);
+        }
+
+        #custom-cursor.hungry {
+            width: 60px; height: 60px;
+            background: transparent;
+            border: 4px dashed var(--primary-dark);
+            animation: chomp 0.5s infinite alternate;
+        }
+
+        @keyframes chomp {
+            0% { transform: translate(-50%, -50%) scale(1) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) scale(0.8) rotate(45deg); }
+        }
+
+        .particle {
+            position: fixed;
+            width: 8px; height: 8px;
+            background: var(--primary-dark);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9998;
+            animation: fadeDrop 0.8s forwards;
+        }
+
+        @keyframes fadeDrop {
+            0% { opacity: 0.6; transform: translateY(0) scale(1); }
+            100% { opacity: 0; transform: translateY(40px) scale(0); }
+        }
+
+        /* 🛒 Floating Cart */
+        #floating-cart {
+            position: fixed;
+            bottom: 40px; right: 40px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(15px);
+            padding: 20px;
+            border-radius: 50%;
+            font-size: 2rem;
+            z-index: 1000;
+            box-shadow: 0 10px 30px rgba(43, 27, 18, 0.15);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        #floating-cart.bounce {
+            transform: scale(1.3) translateY(-10px);
+            border-color: var(--primary);
+        }
+
+        .cart-badge {
+            position: absolute;
+            top: -5px; right: -5px;
+            background: var(--primary-dark);
+            color: white;
+            font-size: 1rem;
+            font-weight: bold;
+            padding: 5px 10px;
+            border-radius: 20px;
+        }
+
+        .falling-item {
+            position: fixed;
+            font-size: 3rem;
+            pointer-events: none;
+            z-index: 1001;
+            transition: all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        /* Header Styles */
+        header {
+            position: fixed;
+            top: 0; width: 100%;
+            padding: 20px 0;
+            background: rgba(253, 248, 244, 0.85); /* Creamy transparent header */
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid var(--glass-border);
+            z-index: 1000;
+            text-align: center;
+        }
+
+        header h2 {
+            margin: 0;
+            font-size: 2rem;
+            letter-spacing: 2px;
+            color: var(--text-main);
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+
+        header h2 span {
+            color: var(--primary);
+        }
+
+        /* Full Screen Sections */
+        section {
+            min-height: 100vh;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            scroll-snap-align: start;
+            padding: 80px 20px 20px 20px;
+            box-sizing: border-box;
+            position: relative;
+        }
+
+        .hero { flex-direction: column; text-align: center; }
+        .hero h1 { 
+            font-size: 5rem; 
+            margin-bottom: 10px; 
+            color: var(--text-main);
+            text-shadow: 2px 2px 10px rgba(201, 138, 75, 0.2); 
+        }
+        .hero p { font-size: 1.3rem; color: var(--text-muted); max-width: 600px; font-weight: 500;}
+        
+        .scroll-indicator { 
+            margin-top: 50px; 
+            font-size: 2rem; 
+            color: var(--primary-dark); 
+            animation: bounce 2s infinite; 
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-20px); }
+            60% { transform: translateY(-10px); }
+        }
+
+        /* SPLIT LAYOUT */
+        .menu-row {
+            display: flex;
+            width: 100%; max-width: 1200px;
+            margin: 0 auto;
+            align-items: center;
+            justify-content: space-between;
+            gap: 40px;
+        }
+
+        .visual-container {
+            flex: 1; display: flex; justify-content: center; align-items: center;
+            opacity: 0; transform: translateX(-150px) scale(0.8);
+            transition: all 1s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        .food-emoji {
+            font-size: 18rem;
+            filter: drop-shadow(0 20px 30px rgba(43, 27, 18, 0.3));
+            animation: majesticFloat 6s ease-in-out infinite;
+        }
+
+        @keyframes majesticFloat {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            25% { transform: translateY(-20px) rotate(5deg); }
+            75% { transform: translateY(20px) rotate(-5deg); }
+        }
+
+        .text-container {
+            flex: 1; opacity: 0; transform: translateX(150px);
+            transition: all 1s cubic-bezier(0.25, 0.8, 0.25, 1); transition-delay: 0.2s;
+            perspective: 1000px;
+        }
+
+        /* 3D Glass Menu Card (Light Theme) */
+        .menu-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(15px);
+            border-radius: 30px;
+            padding: 50px;
+            box-shadow: 0 15px 35px rgba(43, 27, 18, 0.1);
+            transform-style: preserve-3d;
+            transition: transform 0.1s ease-out, box-shadow 0.1s ease-out;
+        }
+
+        .item-name { 
+            font-size: 3rem; 
+            margin: 0 0 10px 0; 
+            color: var(--primary-dark); 
+            transform: translateZ(30px); 
+        }
+        
+        .item-price { 
+            font-size: 2.5rem; 
+            font-weight: bold; 
+            color: var(--primary); 
+            display: block; 
+            margin-bottom: 20px; 
+            padding-bottom: 20px; 
+            border-bottom: 2px dashed var(--glass-border); 
+            transform: translateZ(20px); 
+        }
+        
+        .item-desc { 
+            font-size: 1.4rem; 
+            color: var(--text-muted); 
+            line-height: 1.8; 
+            margin: 0 0 30px 0; 
+            transform: translateZ(10px); 
+            font-weight: 500;
+        }
+
+        .order-btn {
+            background: transparent;
+            border: 2px solid var(--primary-dark);
+            color: var(--primary-dark);
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            border-radius: 30px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            transform: translateZ(40px);
+        }
+
+        .order-btn:hover {
+            background: var(--primary-dark);
+            color: #ffffff;
+            box-shadow: 0 10px 20px rgba(140, 85, 33, 0.2);
+        }
+
+        .reveal .visual-container { opacity: 1; transform: translateX(0) scale(1); }
+        .reveal .text-container { opacity: 1; transform: translateX(0); }
+
+        #secret-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9); color: #00ffcc; font-size: 4rem;
+            display: flex; justify-content: center; align-items: center;
+            z-index: 10000; opacity: 0; pointer-events: none; transition: opacity 0.5s;
+            text-align: center;
+        }
+
+        /* --- DARK ROAST FOOTER --- */
+        footer {
+            background: #2b1b12; /* Dark coffee bean color */
+            color: #fdf8f4;
+            padding: 80px 20px;
+            text-align: center;
+            border-top: 5px solid var(--primary);
+            scroll-snap-align: end;
+            position: relative;
+            z-index: 10;
+        }
+
+        footer h3 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 2rem;
+        }
+
+        .contact-details {
+            color: #d4c5b9; /* Soft light brown text */
+            font-size: 1.2rem;
+            line-height: 2;
+            margin-bottom: 40px;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .social-links a {
+            color: #fdf8f4;
+            text-decoration: none;
+            padding: 15px 35px;
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 40px;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .social-links a:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+            box-shadow: 0 10px 25px rgba(201, 138, 75, 0.4);
+            transform: translateY(-5px);
+            color: #ffffff;
+        }
+
+        @media (pointer: coarse) {
+            body { cursor: auto; }
+            #custom-cursor, .particle { display: none; }
+            .menu-row { flex-direction: column; text-align: center; }
+            .food-emoji { font-size: 12rem; }
+            .menu-card { transform: none !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="parallax-bg"></div>
+    <div id="custom-cursor"></div>
+    <div id="secret-overlay">QUANTUM MODE UNLOCKED<br><span style="font-size: 2rem;">Reality is now optional.</span></div>
+    
+    <div id="floating-cart">
+        🛒 <span class="cart-badge" id="cart-count">0</span>
+    </div>
+
+    <header>
+        <h2 id="logo">CAFFE-30 <span>SIJHORA</span></h2>
+    </header>
+
+    <section class="hero">
+        <h1>Welcome to Caffe-30</h1>
+        <p>Sijhora's premium spot for mouth-watering Indian fast food, perfectly brewed coffees, and warm aesthetics.</p>
+        <div class="scroll-indicator">↓ Scroll to Experience ↓</div>
+    </section>
+
+    <!-- Item 1: Pizza -->
+    <section class="menu-section">
+        <div class="menu-row">
+            <div class="visual-container"><div class="food-emoji">🍕</div></div>
+            <div class="text-container">
+                <div class="menu-card">
+                    <h3 class="item-name">Tandoori Paneer Pizza</h3>
+                    <span class="item-price">₹199</span>
+                    <p class="item-desc">A classic fusion. Freshly baked crust topped with gooey mozzarella, marinated tandoori paneer cubes, crisp capsicum, and onions.</p>
+                    <button class="order-btn" onclick="orderItem(event, '🍕')">Add to Order</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Item 2: Burger -->
+    <section class="menu-section">
+        <div class="menu-row">
+            <div class="visual-container"><div class="food-emoji" style="animation-delay: -1s;">🍔</div></div>
+            <div class="text-container">
+                <div class="menu-card">
+                    <h3 class="item-name">Double Tikki Veg Burger</h3>
+                    <span class="item-price">₹89</span>
+                    <p class="item-desc">Two crispy, spiced potato patties stacked high with fresh lettuce, juicy tomatoes, caramelized onions, and our secret in-house eggless mayo.</p>
+                    <button class="order-btn" onclick="orderItem(event, '🍔')">Add to Order</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Item 3: Fries -->
+    <section class="menu-section">
+        <div class="menu-row">
+            <div class="visual-container"><div class="food-emoji" style="animation-delay: -2s;">🍟</div></div>
+            <div class="text-container">
+                <div class="menu-card">
+                    <h3 class="item-name">Peri Peri French Fries</h3>
+                    <span class="item-price">₹99</span>
+                    <p class="item-desc">Golden, extra-crispy crinkle-cut fries generously dusted with spicy, tangy peri-peri seasoning. Served with a side of creamy cheesy dip.</p>
+                    <button class="order-btn" onclick="orderItem(event, '🍟')">Add to Order</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Item 4: Sandwich -->
+    <section class="menu-section">
+        <div class="menu-row">
+            <div class="visual-container"><div class="food-emoji" style="animation-delay: -0.5s;">🥪</div></div>
+            <div class="text-container">
+                <div class="menu-card">
+                    <h3 class="item-name">Grilled Cheese Corn Sandwich</h3>
+                    <span class="item-price">₹110</span>
+                    <p class="item-desc">Jumbo bread slices stuffed with sweet corn kernels, a blend of processed and cheddar cheese, and a pinch of black pepper, grilled to a perfect crunch.</p>
+                    <button class="order-btn" onclick="orderItem(event, '🥪')">Add to Order</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Item 5: Maggi -->
+    <section class="menu-section">
+        <div class="menu-row">
+            <div class="visual-container"><div class="food-emoji" style="animation-delay: -3s;">🍜</div></div>
+            <div class="text-container">
+                <div class="menu-card">
+                    <h3 class="item-name">Street-Style Masala Maggi</h3>
+                    <span class="item-price">₹60</span>
+                    <p class="item-desc">The ultimate comfort food. Soupy noodles cooked with chopped tomatoes, onions, green chilies, and a double dash of magic masala.</p>
+                    <button class="order-btn" onclick="orderItem(event, '🍜')">Add to Order</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Item 6: Veg Patty -->
+    <section class="menu-section">
+        <div class="menu-row">
+            <div class="visual-container"><div class="food-emoji" style="animation-delay: -1.5s;">🥟</div></div>
+            <div class="text-container">
+                <div class="menu-card">
+                    <h3 class="item-name">Classic Veg Patty</h3>
+                    <span class="item-price">₹40</span>
+                    <p class="item-desc">Flaky, multi-layered puff pastry filled with a mildly spiced, savory potato and pea mixture. Baked fresh daily in our ovens.</p>
+                    <button class="order-btn" onclick="orderItem(event, '🥟')">Add to Order</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Item 7: Coffee -->
+    <section class="menu-section">
+        <div class="menu-row">
+            <div class="visual-container"><div class="food-emoji" style="animation-delay: -2.5s;">☕</div></div>
+            <div class="text-container">
+                <div class="menu-card">
+                    <h3 class="item-name">Thick Cold Coffee</h3>
+                    <span class="item-price">₹120</span>
+                    <p class="item-desc">Rich, blended cold coffee made with full-cream milk, topped with a generous scoop of vanilla ice cream and caramel syrup drizzle.</p>
+                    <button class="order-btn" onclick="orderItem(event, '☕')">Add to Order</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <h3>CAFFE-30 SIJHORA</h3>
+        <div class="contact-details">
+            <p>📍 Main Market Road, Sijhora, Madhya Pradesh</p>
+            <p>📞 +91 82230 99685</p>
+            <p>✉️ satyamsahu16906@gmail.com</p>
+            <p>🕒 Open Everyday: 10:00 AM - 10:00 PM</p>
+        </div>
+        <div class="social-links">
+            <a href="#">Instagram</a>
+            <a href="#">Facebook</a>
+            <a href="#">Order Online</a>
+        </div>
+    </footer>
+
+    <!-- JS MAGIC ENGINE -->
+    <script>
+        // Coffee Bean Parallax Background
+        const bg = document.getElementById('parallax-bg');
+        const symbols = ['🫘', '☕', '🤎', '✨']; 
+        for(let i=0; i<80; i++) {
+            let span = document.createElement('span');
+            span.innerText = symbols[Math.floor(Math.random() * symbols.length)];
+            
+            // Randomize sizes and opacity for depth
+            span.style.fontSize = `${Math.random() * 3 + 1}rem`;
+            span.style.opacity = Math.random() * 0.5 + 0.1;
+            
+            bg.appendChild(span);
+        }
+
+        // Global Mouse Tracking
+        let mouseX = 0; let mouseY = 0;
+        const cursor = document.getElementById('custom-cursor');
+        
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX; mouseY = e.clientY;
+            cursor.style.left = `${mouseX}px`; cursor.style.top = `${mouseY}px`;
+            
+            const offsetX = (window.innerWidth / 2 - mouseX) * 0.05;
+            const offsetY = (window.innerHeight / 2 - mouseY) * 0.05;
+            bg.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
+
+            if(Math.random() > 0.85) createParticle(mouseX, mouseY);
+        });
+
+        function createParticle(x, y) {
+            const p = document.createElement('div');
+            p.className = 'particle';
+            p.style.left = `${x + (Math.random() * 20 - 10)}px`;
+            p.style.top = `${y + (Math.random() * 20 - 10)}px`;
+            document.body.appendChild(p);
+            setTimeout(() => p.remove(), 800);
+        }
+
+        document.querySelectorAll('.food-emoji').forEach(emoji => {
+            emoji.addEventListener('mouseenter', () => cursor.classList.add('hungry'));
+            emoji.addEventListener('mouseleave', () => cursor.classList.remove('hungry'));
+        });
+
+        // 3D Glass Tilt Effect
+        document.querySelectorAll('.menu-card').forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left; const y = e.clientY - rect.top;
+                const centerX = rect.width / 2; const centerY = rect.height / 2;
+                const rotateX = ((y - centerY) / centerY) * -15; 
+                const rotateY = ((x - centerX) / centerX) * 15;
+                
+                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+                
+                // Adjusted shadow color for the light theme
+                card.style.boxShadow = `${-rotateY}px ${rotateX}px 30px rgba(140, 85, 33, 0.15)`;
+            });
+
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg)';
+                card.style.boxShadow = '0 15px 35px rgba(43, 27, 18, 0.1)';
+            });
+        });
+
+        // Secret Menu Easter Egg
+        let clickCount = 0; let clickTimer;
+        document.getElementById('logo').addEventListener('click', () => {
+            clickCount++; clearTimeout(clickTimer);
+            if (clickCount >= 3) {
+                document.body.classList.toggle('hacked');
+                const overlay = document.getElementById('secret-overlay');
+                if (document.body.classList.contains('hacked')) {
+                    overlay.style.opacity = '1';
+                    setTimeout(() => overlay.style.opacity = '0', 2000);
+                }
+                clickCount = 0;
+            } else {
+                clickTimer = setTimeout(() => { clickCount = 0; }, 1000);
+            }
+        });
+
+        // Fake Physics Drop to Cart
+        let cartItems = 0;
+        const cartElement = document.getElementById('floating-cart');
+        const cartCountBadge = document.getElementById('cart-count');
+
+        function orderItem(e, emojiText) {
+            const startX = e.clientX; const startY = e.clientY;
+            const cartRect = cartElement.getBoundingClientRect();
+            const endX = cartRect.left + (cartRect.width / 2);
+            const endY = cartRect.top + (cartRect.height / 2);
+
+            const fallingItem = document.createElement('div');
+            fallingItem.className = 'falling-item';
+            fallingItem.innerText = emojiText;
+            fallingItem.style.left = `${startX}px`;
+            fallingItem.style.top = `${startY}px`;
+            
+            document.body.appendChild(fallingItem);
+
+            requestAnimationFrame(() => {
+                fallingItem.style.transform = `translate(${endX - startX - 25}px, ${endY - startY - 25}px) rotate(720deg) scale(0.2)`;
+                fallingItem.style.opacity = '0.7';
+            });
+
+            setTimeout(() => {
+                fallingItem.remove();
+                cartItems++;
+                cartCountBadge.innerText = cartItems;
+                cartElement.classList.add('bounce');
+                setTimeout(() => cartElement.classList.remove('bounce'), 300);
+            }, 800); 
+        }
+
+        // Scroll Reveal Observer
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('reveal');
+                } else {
+                    entry.target.classList.remove('reveal');
+                }
+            });
+        }, { threshold: 0.3 });
+
+        document.querySelectorAll('.menu-section').forEach((section) => observer.observe(section));
+    </script>
+</body>
+</html>

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Caffe-30 Sijhora | Premium Light Theme</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- 💳 Razorpay Library -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+</head>
+<body>
+
+    <div id="parallax-bg"></div>
+    <div id="custom-cursor"></div>
+    <div id="secret-overlay">QUANTUM MODE UNLOCKED<br><span style="font-size: 2rem;">Reality is now optional.</span></div>
+    
+    <div id="floating-cart">
+        🛒 <span class="cart-badge" id="cart-count">0</span>
+    </div>
+
+    <div id="cart-modal">
+        <div class="cart-header">
+            <h2>Your Tray</h2>
+            <button id="close-cart">✕</button>
+        </div>
+        
+        <div id="cart-items">
+            </div>
+        
+        <!-- Update this section inside #cart-modal -->
+        <div class="cart-footer">
+            <div class="total-row">
+                <span>Total:</span>
+                <span id="cart-total">₹0</span>
+            </div>
+            <!-- 🌟 New Inputs -->
+            <input type="text" id="customer-name" class="cart-input" placeholder="Your Full Name" required>
+            <input type="tel" id="customer-phone" class="cart-input" placeholder="Phone Number" required>
+            <input type="number" id="table-number" class="cart-input" placeholder="Table Number (e.g. 4)" required>
+            <input type="text" id="special-instructions" class="cart-input" placeholder="Special instructions (e.g. Extra spicy)">
+            
+            <button id="checkout-btn">Proceed to Pay</button>
+        </div>
+    </div>
+
+    <!-- 🧾 NEW: The Receipt Modal -->
+    <div id="receipt-overlay">
+        <div class="receipt-card">
+            <h2>Payment Successful!</h2>
+            <p>Your order has been sent to the kitchen.</p>
+            
+            <div class="receipt-details">
+                <p id="receipt-name"></p>
+                <p id="receipt-table"></p>
+            </div>
+            
+            <ul class="receipt-items" id="receipt-items-list"></ul>
+            
+            <div class="receipt-total" id="receipt-total-price"></div>
+            
+            <button class="close-receipt-btn" onclick="closeReceipt()">Awesome, thanks!</button>
+        </div>
+    </div>
+    </div>
+
+    <header>
+        <h2 id="logo">CAFFE-30 <span>SIJHORA</span></h2>
+    </header>
+
+    <section class="hero">
+        <h1>Welcome to Caffe-30</h1>
+        <p>Sijhora's premium spot for mouth-watering Indian fast food, perfectly brewed coffees, and warm aesthetics.</p>
+        <div class="scroll-indicator">↓ Scroll to Experience ↓</div>
+    </section>
+
+    <section class="menu-section">
+        <div class="menu-row">
+            <div class="visual-container"><div class="food-emoji">🍕</div></div>
+            <div class="text-container">
+                <div class="menu-card">
+                    <h3 class="item-name">Tandoori Paneer Pizza</h3>
+                    <span class="item-price">₹199</span>
+                    <p class="item-desc">A classic fusion. Freshly baked crust topped with gooey mozzarella, marinated tandoori paneer cubes, crisp capsicum, and onions.</p>
+                    <button class="order-btn" onclick="orderItem(event, 'Tandoori Paneer Pizza', 199, '🍕')">Add to Order</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="menu-section">
+        <div class="menu-row">
+            <div class="visual-container"><div class="food-emoji" style="animation-delay: -1s;">🍔</div></div>
+            <div class="text-container">
+                <div class="menu-card">
+                    <h3 class="item-name">Double Tikki Veg Burger</h3>
+                    <span class="item-price">₹89</span>
+                    <p class="item-desc">Two crispy, spiced potato patties stacked high with fresh lettuce, juicy tomatoes, caramelized onions, and our secret in-house eggless mayo.</p>
+                    <button class="order-btn" onclick="orderItem(event, 'Double Tikki Veg Burger', 89, '🍔')">Add to Order</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="menu-section">
+        <div class="menu-row">
+            <div class="visual-container"><div class="food-emoji" style="animation-delay: -2s;">🍟</div></div>
+            <div class="text-container">
+                <div class="menu-card">
+                    <h3 class="item-name">Peri Peri French Fries</h3>
+                    <span class="item-price">₹99</span>
+                    <p class="item-desc">Golden, extra-crispy crinkle-cut fries generously dusted with spicy, tangy peri-peri seasoning. Served with a side of creamy cheesy dip.</p>
+                    <button class="order-btn" onclick="orderItem(event, 'Peri Peri French Fries', 99, '🍟')">Add to Order</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="menu-section">
+        <div class="menu-row">
+            <div class="visual-container"><div class="food-emoji" style="animation-delay: -0.5s;">🥪</div></div>
+            <div class="text-container">
+                <div class="menu-card">
+                    <h3 class="item-name">Grilled Cheese Corn Sandwich</h3>
+                    <span class="item-price">₹110</span>
+                    <p class="item-desc">Jumbo bread slices stuffed with sweet corn kernels, a blend of processed and cheddar cheese, and a pinch of black pepper, grilled to a perfect crunch.</p>
+                    <button class="order-btn" onclick="orderItem(event, 'Grilled Cheese Corn Sandwich', 110, '🥪')">Add to Order</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="menu-section">
+        <div class="menu-row">
+            <div class="visual-container"><div class="food-emoji" style="animation-delay: -3s;">🍜</div></div>
+            <div class="text-container">
+                <div class="menu-card">
+                    <h3 class="item-name">Street-Style Masala Maggi</h3>
+                    <span class="item-price">₹60</span>
+                    <p class="item-desc">The ultimate comfort food. Soupy noodles cooked with chopped tomatoes, onions, green chilies, and a double dash of magic masala.</p>
+                    <button class="order-btn" onclick="orderItem(event, 'Street-Style Masala Maggi', 60, '🍜')">Add to Order</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="menu-section">
+        <div class="menu-row">
+            <div class="visual-container"><div class="food-emoji" style="animation-delay: -1.5s;">🥟</div></div>
+            <div class="text-container">
+                <div class="menu-card">
+                    <h3 class="item-name">Classic Veg Patty</h3>
+                    <span class="item-price">₹40</span>
+                    <p class="item-desc">Flaky, multi-layered puff pastry filled with a mildly spiced, savory potato and pea mixture. Baked fresh daily in our ovens.</p>
+                    <button class="order-btn" onclick="orderItem(event, 'Classic Veg Patty', 40, '🥟')">Add to Order</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="menu-section">
+        <div class="menu-row">
+            <div class="visual-container"><div class="food-emoji" style="animation-delay: -2.5s;">☕</div></div>
+            <div class="text-container">
+                <div class="menu-card">
+                    <h3 class="item-name">Thick Cold Coffee</h3>
+                    <span class="item-price">₹120</span>
+                    <p class="item-desc">Rich, blended cold coffee made with full-cream milk, topped with a generous scoop of vanilla ice cream and caramel syrup drizzle.</p>
+                    <button class="order-btn" onclick="orderItem(event, 'Thick Cold Coffee', 120, '☕')">Add to Order</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <h3>CAFFE-30 SIJHORA</h3>
+        <div class="contact-details">
+            <p>📍 Main Market Road, Sijhora, Madhya Pradesh</p>
+            <p>📞 +91 82230 99685</p>
+            <p>✉️ satyamsahu16906@gmail.com</p>
+            <p>🕒 Open Everyday: 10:00 AM - 10:00 PM</p>
+        </div>
+        <div class="social-links">
+            <a href="#">Instagram</a>
+            <a href="#">Facebook</a>
+            <a href="#">Order Online</a>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
