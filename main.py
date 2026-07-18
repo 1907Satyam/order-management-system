@@ -12,26 +12,36 @@ import secrets
 app = FastAPI(title="Caffe-30 Backend API")
 
 # --- SECURITY CONFIGURATION ---
-security = HTTPBasic()
+security = HTTPBasic(auto_error=False)
 
 # Change these to whatever you want your admin login to be!
 ADMIN_USERNAME = "admin"
-ADMIN_PASSWORD = "Satyam1907"
+ADMIN_PASSWORD = "Satyam@1907"
 
 def verify_credentials(credentials: HTTPBasicCredentials = Depends(security)):
+    # If no credentials are provided, block it silently (no popup)
+    if not credentials:
+         raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Missing credentials",
+            headers={"WWW-Authenticate": "Bearer"}, 
+        )
+         
     is_correct_username = secrets.compare_digest(credentials.username, ADMIN_USERNAME)
     is_correct_password = secrets.compare_digest(credentials.password, ADMIN_PASSWORD)
+    
     if not (is_correct_username and is_correct_password):
+        # We changed "Basic" to "Bearer" here so the browser ignores it
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect username or password",
-            headers={"WWW-Authenticate": "Basic"},
+            headers={"WWW-Authenticate": "Bearer"},
         )
     return credentials.username
 
 # --- RAZORPAY CONFIGURATION ---
 RZP_KEY_ID = "rzp_test_TEeLFQAYo8bpHT"
-RZP_KEY_SECRET = " yPR82eTB5QPNNQGP5HmYR3n9"
+RZP_KEY_SECRET = "yPR82eTB5QPNNQGP5HmYR3n9"
 
 razorpay_client = razorpay.Client(auth=(RZP_KEY_ID, RZP_KEY_SECRET))
 
